@@ -3,7 +3,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="AVD - Analise de Livros",
-    page_icon="📚",
+    page_icon=":books:",
     layout="wide",
 )
 

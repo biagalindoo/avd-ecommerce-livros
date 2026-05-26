@@ -40,6 +40,13 @@ Crie um ambiente virtual e instale as dependencias:
 ```bash
 python -m venv .venv
 pip install -r requirements.txt
+pip install -e .
+```
+
+Execute a extracao dos dados:
+
+```bash
+python scripts/run_scraping.py
 ```
 
 As etapas do projeto serao adicionadas em commits pequenos.
