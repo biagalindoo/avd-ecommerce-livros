@@ -62,4 +62,10 @@ Execute a analise estatistica exploratoria:
 python scripts/run_analysis.py
 ```
 
+Gere as visualizacoes em HTML:
+
+```bash
+python scripts/run_visualizations.py
+```
+
 As etapas do projeto serao adicionadas em commits pequenos.
