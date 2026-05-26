@@ -56,4 +56,10 @@ Execute o tratamento dos dados:
 python scripts/run_etl.py
 ```
 
+Execute a analise estatistica exploratoria:
+
+```bash
+python scripts/run_analysis.py
+```
+
 As etapas do projeto serao adicionadas em commits pequenos.
