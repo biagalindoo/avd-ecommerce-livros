@@ -31,7 +31,154 @@ st.set_page_config(
     page_title="AVD - Ecommerce de Livros",
     page_icon=":books:",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
+
+
+def apply_custom_theme() -> None:
+    st.markdown(
+        """
+        <style>
+        :root {
+            --avd-bg: #f8fafc;
+            --avd-panel: #ffffff;
+            --avd-text: #111827;
+            --avd-muted: #374151;
+            --avd-border: #d1d5db;
+            --avd-accent: #dc2626;
+        }
+
+        .stApp {
+            background: var(--avd-bg);
+            color: var(--avd-text);
+        }
+
+        section[data-testid="stSidebar"] {
+            background: #111827;
+            border-right: 1px solid #374151;
+        }
+
+        section[data-testid="stSidebar"] * {
+            color: #f9fafb !important;
+        }
+
+        section[data-testid="stSidebar"] [data-baseweb="select"] span,
+        section[data-testid="stSidebar"] input,
+        section[data-testid="stSidebar"] label,
+        section[data-testid="stSidebar"] p {
+            color: #f9fafb !important;
+        }
+
+        div[data-baseweb="select"] input,
+        div[data-baseweb="select"] span {
+            color: #f9fafb !important;
+        }
+
+        .block-container {
+            padding: 3rem 2rem 4rem 2rem;
+            max-width: 1480px;
+        }
+
+        h1, h2, h3, h4, h5, h6, p, label, span, div {
+            color: var(--avd-text);
+        }
+
+        [data-testid="stCaptionContainer"] p {
+            color: var(--avd-muted);
+            font-size: 1rem;
+        }
+
+        [data-testid="stMetric"] {
+            background: var(--avd-panel);
+            border: 1px solid var(--avd-border);
+            border-radius: 8px;
+            padding: 1rem 1.1rem;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+        }
+
+        [data-testid="stMetricLabel"] p {
+            color: #4b5563;
+            font-weight: 700;
+        }
+
+        [data-testid="stMetricValue"] {
+            color: #111827;
+            font-weight: 800;
+        }
+
+        .stPlotlyChart {
+            background: #ffffff;
+            border: 1px solid var(--avd-border);
+            border-radius: 8px;
+            padding: 0.7rem;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+        }
+
+        .stPlotlyChart svg text {
+            fill: #111827 !important;
+            color: #111827 !important;
+            opacity: 1 !important;
+        }
+
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--avd-border);
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            color: #374151;
+            font-weight: 700;
+        }
+
+        .stTabs [aria-selected="true"] {
+            color: var(--avd-accent);
+        }
+
+        .stDataFrame {
+            background: #ffffff;
+            border: 1px solid var(--avd-border);
+            border-radius: 8px;
+            padding: 0.4rem;
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            margin: 1.1rem 0 1.4rem 0;
+        }
+
+        .insight-card {
+            background: #ffffff;
+            border: 1px solid var(--avd-border);
+            border-left: 5px solid var(--avd-accent);
+            border-radius: 8px;
+            padding: 1rem 1.1rem;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+        }
+
+        .insight-card strong {
+            color: #111827;
+            display: block;
+            font-size: 0.95rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .insight-card span {
+            color: #374151;
+            font-size: 0.92rem;
+            line-height: 1.35;
+        }
+
+        @media (max-width: 900px) {
+            .insight-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 @st.cache_data(show_spinner=False)
@@ -111,17 +258,47 @@ def render_kpis(df: pd.DataFrame) -> None:
     col4.metric("Nota media", f"{avg_rating:.2f}/5")
 
 
+def render_insights(df: pd.DataFrame) -> None:
+    summary = category_summary(df)
+    best_category = summary.sort_values("avg_value_score", ascending=False).iloc[0]
+    best_book = df.sort_values("value_score", ascending=False).iloc[0]
+    median_price = df["price_gbp"].median()
+
+    st.markdown(
+        f"""
+        <div class="insight-grid">
+            <div class="insight-card">
+                <strong>Categoria mais eficiente</strong>
+                <span>{best_category["category"]} combina nota media de
+                {best_category["avg_rating"]:.2f} com melhor valor relativo.</span>
+            </div>
+            <div class="insight-card">
+                <strong>Livro com maior valor percebido</strong>
+                <span>{best_book["title"]} tem nota {int(best_book["rating"])}
+                e preco de {format_gbp(best_book["price_gbp"])}.</span>
+            </div>
+            <div class="insight-card">
+                <strong>Preco central do catalogo</strong>
+                <span>A mediana esta em {format_gbp(median_price)}, melhor
+                referencia que a media quando ha valores extremos.</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_overview_tab(df: pd.DataFrame) -> None:
     left, right = st.columns([1.1, 1])
     with left:
-        st.plotly_chart(plot_price_distribution(df), use_container_width=True)
+        st.plotly_chart(plot_price_distribution(df), use_container_width=True, theme=None)
     with right:
-        st.plotly_chart(plot_rating_price_scatter(df), use_container_width=True)
+        st.plotly_chart(plot_rating_price_scatter(df), use_container_width=True, theme=None)
 
 
 def render_opportunities_tab(df: pd.DataFrame) -> None:
-    st.plotly_chart(plot_category_opportunities(df), use_container_width=True)
-    st.plotly_chart(plot_top_value_books(df), use_container_width=True)
+    st.plotly_chart(plot_category_opportunities(df), use_container_width=True, theme=None)
+    st.plotly_chart(plot_top_value_books(df), use_container_width=True, theme=None)
 
 
 def render_statistics_tab(df: pd.DataFrame) -> None:
@@ -189,6 +366,8 @@ def render_data_tab(df: pd.DataFrame) -> None:
 
 
 def main() -> None:
+    apply_custom_theme()
+
     df = load_books()
     if df.empty:
         render_empty_state()
@@ -206,6 +385,7 @@ def main() -> None:
         return
 
     render_kpis(filtered)
+    render_insights(filtered)
 
     overview_tab, opportunities_tab, statistics_tab, data_tab = st.tabs(
         ["Visao geral", "Oportunidades", "Estatistica", "Dados"]

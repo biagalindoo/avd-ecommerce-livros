@@ -17,7 +17,15 @@ COLOR_ACCENT = "#f97316"
 COLOR_MUTED = "#94a3b8"
 COLOR_GOOD = "#16a34a"
 COLOR_BG = "#ffffff"
-COLOR_TEXT = "#1f2937"
+COLOR_TEXT = "#111827"
+COLOR_AXIS = "#374151"
+COLOR_GRID = "#d1d5db"
+
+
+def shorten_label(value: str, max_length: int = 34) -> str:
+    if len(value) <= max_length:
+        return value
+    return f"{value[: max_length - 3].rstrip()}..."
 
 
 def load_processed_books(path: str | Path | None = None) -> pd.DataFrame:
@@ -32,47 +40,88 @@ def apply_story_layout(fig: go.Figure, title: str, subtitle: str = "") -> go.Fig
             "text": full_title,
             "x": 0.02,
             "xanchor": "left",
+            "font": {"size": 20, "color": COLOR_TEXT},
         },
         paper_bgcolor=COLOR_BG,
         plot_bgcolor=COLOR_BG,
-        font={"family": "Arial", "color": COLOR_TEXT, "size": 13},
-        margin={"l": 48, "r": 24, "t": 88, "b": 48},
-        hoverlabel={"bgcolor": "white", "font_size": 12},
+        template="plotly_white",
+        font={"family": "Arial", "color": COLOR_TEXT, "size": 14},
+        margin={"l": 56, "r": 28, "t": 96, "b": 56},
+        hoverlabel={"bgcolor": "white", "font_size": 13, "font_color": COLOR_TEXT},
         legend_title_text="",
+        legend={"font": {"color": COLOR_TEXT, "size": 12}},
     )
-    fig.update_xaxes(showgrid=False, zeroline=False)
-    fig.update_yaxes(gridcolor="#e5e7eb", zeroline=False)
+    fig.update_xaxes(
+        showgrid=False,
+        zeroline=False,
+        color=COLOR_AXIS,
+        title_font={"color": COLOR_AXIS, "size": 14},
+        tickfont={"color": COLOR_AXIS, "size": 12},
+    )
+    fig.update_yaxes(
+        gridcolor=COLOR_GRID,
+        zeroline=False,
+        color=COLOR_AXIS,
+        title_font={"color": COLOR_AXIS, "size": 14},
+        tickfont={"color": COLOR_AXIS, "size": 12},
+    )
+    return fig
+
+
+def apply_bar_story_layout(
+    fig: go.Figure,
+    title: str,
+    subtitle: str = "",
+    left_margin: int = 56,
+    height: int | None = None,
+) -> go.Figure:
+    fig = apply_story_layout(fig, title, subtitle)
+    fig.update_layout(margin={"l": left_margin, "r": 36, "t": 96, "b": 64})
+    if height is not None:
+        fig.update_layout(height=height)
+    fig.update_yaxes(title_text="", automargin=True)
+    fig.update_layout(yaxis_title="")
     return fig
 
 
 def plot_category_opportunities(df: pd.DataFrame, top_n: int = 12) -> go.Figure:
     summary = category_summary(df).head(top_n).copy()
     summary = summary.sort_values("avg_value_score")
+    summary = summary.assign(
+        category_short=summary["category"].map(lambda category: shorten_label(str(category), 22))
+    )
 
     fig = px.bar(
         summary,
         x="avg_value_score",
-        y="category",
+        y="category_short",
         orientation="h",
         color="avg_rating",
         color_continuous_scale=["#cbd5e1", COLOR_PRIMARY, COLOR_GOOD],
         labels={
             "avg_value_score": "Pontuacao de valor media",
-            "category": "Categoria",
+            "category_short": "",
             "avg_rating": "Nota media",
         },
-        hover_data={
-            "books_count": True,
-            "avg_price_gbp": ":.2f",
-            "avg_rating": ":.2f",
-            "avg_value_score": ":.3f",
-        },
+        custom_data=["category", "books_count", "avg_price_gbp", "avg_rating"],
     )
-    fig.update_traces(marker_line_width=0, opacity=0.95)
-    return apply_story_layout(
+    fig.update_traces(
+        hovertemplate=(
+            "<b>%{customdata[0]}</b><br>"
+            "Livros: %{customdata[1]}<br>"
+            "Preco medio: GBP %{customdata[2]:.2f}<br>"
+            "Nota media: %{customdata[3]:.2f}<br>"
+            "Valor medio: %{x:.3f}<extra></extra>"
+        ),
+        marker_line_width=0,
+        opacity=0.95,
+    )
+    return apply_bar_story_layout(
         fig,
-        "Categorias com melhor equilibrio entre nota e preco",
-        "Barras maiores indicam categorias com maior nota por libra gasta.",
+        "Categorias: nota x preco",
+        "Barras maiores indicam mais nota por libra gasta.",
+        left_margin=190,
+        height=620,
     )
 
 
@@ -97,8 +146,8 @@ def plot_price_distribution(df: pd.DataFrame) -> go.Figure:
     fig.update_traces(marker_line_width=0, opacity=0.82)
     return apply_story_layout(
         fig,
-        "Distribuicao de precos do catalogo",
-        "A linha laranja cria contraste e guia a leitura para o preco central.",
+        "Distribuicao de precos",
+        "A linha laranja marca o preco central.",
     )
 
 
@@ -128,34 +177,48 @@ def plot_rating_price_scatter(df: pd.DataFrame) -> go.Figure:
     fig.update_yaxes(dtick=1)
     return apply_story_layout(
         fig,
-        "Preco e avaliacao nao caminham sempre juntos",
-        "Agrupamento por faixa de preco ajuda a perceber excecoes e oportunidades.",
+        "Preco x avaliacao",
+        "As cores separam as faixas de preco.",
     )
 
 
-def plot_top_value_books(df: pd.DataFrame, top_n: int = 15) -> go.Figure:
+def plot_top_value_books(df: pd.DataFrame, top_n: int = 10) -> go.Figure:
     top_books = df.nlargest(top_n, "value_score").sort_values("value_score")
+    top_books = top_books.assign(
+        title_short=top_books["title"].map(lambda title: shorten_label(str(title), 30))
+    )
 
     fig = px.bar(
         top_books,
         x="value_score",
-        y="title",
+        y="title_short",
         orientation="h",
         color="rating",
         color_continuous_scale=["#cbd5e1", COLOR_PRIMARY, COLOR_GOOD],
         labels={
             "value_score": "Nota por libra",
-            "title": "Livro",
+            "title_short": "",
             "rating": "Nota",
         },
-        hover_data={"category": True, "price_gbp": ":.2f", "rating": True},
+        custom_data=["title", "category", "price_gbp", "rating"],
     )
-    fig.update_traces(marker_line_width=0)
-    fig.update_yaxes(tickfont={"size": 10})
-    return apply_story_layout(
+    fig.update_traces(
+        hovertemplate=(
+            "<b>%{customdata[0]}</b><br>"
+            "Categoria: %{customdata[1]}<br>"
+            "Preco: GBP %{customdata[2]:.2f}<br>"
+            "Nota: %{customdata[3]}<br>"
+            "Nota por libra: %{x:.3f}<extra></extra>"
+        ),
+        marker_line_width=0,
+    )
+    fig.update_yaxes(tickfont={"size": 12})
+    return apply_bar_story_layout(
         fig,
-        "Livros com maior valor percebido",
-        "A ordenacao horizontal reduz esforco de comparacao e evidencia o topo do ranking.",
+        "Top livros por valor",
+        "Ranking pela relacao entre nota e preco.",
+        left_margin=230,
+        height=640,
     )
 
 
