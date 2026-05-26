@@ -68,4 +68,10 @@ Gere as visualizacoes em HTML:
 python scripts/run_visualizations.py
 ```
 
+Abra o dashboard interativo:
+
+```bash
+streamlit run app/streamlit_app.py
+```
+
 As etapas do projeto serao adicionadas em commits pequenos.
