@@ -68,6 +68,7 @@ def test_build_figures_returns_expected_story_charts():
 
     assert set(figures) == {
         "category_opportunities",
+        "ml_segments",
         "price_distribution",
         "rating_price_scatter",
         "top_value_books",

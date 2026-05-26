@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 
 from avd_project.analysis import category_summary
 from avd_project.config import PROCESSED_DATA_DIR, PROJECT_ROOT
+from avd_project.ml import segment_books
 
 
 EXPORTS_DIR = PROJECT_ROOT / "exports" / "figures"
@@ -222,12 +223,39 @@ def plot_top_value_books(df: pd.DataFrame, top_n: int = 10) -> go.Figure:
     )
 
 
+def plot_ml_segments(df: pd.DataFrame) -> go.Figure:
+    segmented = segment_books(df)
+    fig = px.scatter(
+        segmented,
+        x="price_gbp",
+        y="value_score",
+        color="ml_segment",
+        size="rating",
+        hover_name="title",
+        hover_data={"category": True, "price_gbp": ":.2f", "rating": True},
+        labels={
+            "price_gbp": "Preco em libra",
+            "value_score": "Nota por libra",
+            "ml_segment": "Segmento ML",
+            "rating": "Nota",
+        },
+        color_discrete_sequence=[COLOR_GOOD, COLOR_PRIMARY, COLOR_ACCENT],
+    )
+    fig.update_traces(marker={"opacity": 0.72, "line": {"width": 0}})
+    return apply_story_layout(
+        fig,
+        "Segmentacao por Machine Learning",
+        "K-Means agrupa livros por preco, nota, valor e tamanho do titulo.",
+    )
+
+
 def build_figures(df: pd.DataFrame) -> dict[str, go.Figure]:
     return {
         "category_opportunities": plot_category_opportunities(df),
         "price_distribution": plot_price_distribution(df),
         "rating_price_scatter": plot_rating_price_scatter(df),
         "top_value_books": plot_top_value_books(df),
+        "ml_segments": plot_ml_segments(df),
     }
 
 

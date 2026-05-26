@@ -74,4 +74,8 @@ Abra o dashboard interativo:
 streamlit run app/streamlit_app.py
 ```
 
+## Bonus de inovacao
+
+O projeto inclui uma aba **ML** no dashboard com segmentacao K-Means. O modelo agrupa livros por preco, nota, valor percebido e tamanho do titulo para apoiar decisoes de catalogo.
+
 As etapas do projeto serao adicionadas em commits pequenos.

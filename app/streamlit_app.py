@@ -19,8 +19,10 @@ from avd_project.analysis import (  # noqa: E402
     pearson_correlations,
 )
 from avd_project.config import PROCESSED_DATA_DIR  # noqa: E402
+from avd_project.ml import ml_segment_summary, segment_books  # noqa: E402
 from avd_project.visualization import (  # noqa: E402
     plot_category_opportunities,
+    plot_ml_segments,
     plot_price_distribution,
     plot_rating_price_scatter,
     plot_top_value_books,
@@ -62,16 +64,37 @@ def apply_custom_theme() -> None:
             color: #f9fafb !important;
         }
 
-        section[data-testid="stSidebar"] [data-baseweb="select"] span,
         section[data-testid="stSidebar"] input,
         section[data-testid="stSidebar"] label,
         section[data-testid="stSidebar"] p {
             color: #f9fafb !important;
         }
 
+        section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+            background: #ffffff !important;
+            border-color: #d1d5db !important;
+        }
+
+        section[data-testid="stSidebar"] div[data-baseweb="select"] span,
+        section[data-testid="stSidebar"] div[data-baseweb="select"] input {
+            color: #111827 !important;
+        }
+
+        section[data-testid="stSidebar"] div[data-baseweb="select"] svg {
+            fill: #111827 !important;
+        }
+
+        section[data-testid="stSidebar"] div[data-baseweb="tag"] {
+            background: #ef4444 !important;
+        }
+
+        section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
+            color: #ffffff !important;
+        }
+
         div[data-baseweb="select"] input,
         div[data-baseweb="select"] span {
-            color: #f9fafb !important;
+            color: #111827 !important;
         }
 
         .block-container {
@@ -365,6 +388,48 @@ def render_data_tab(df: pd.DataFrame) -> None:
     )
 
 
+def render_ml_tab(df: pd.DataFrame) -> None:
+    segmented = segment_books(df)
+    summary = ml_segment_summary(df)
+
+    st.subheader("Bonus: segmentacao com Machine Learning")
+    st.write(
+        "O modelo K-Means separa os livros em perfis usando preco, nota, "
+        "valor percebido e tamanho do titulo."
+    )
+    st.plotly_chart(plot_ml_segments(df), use_container_width=True, theme=None)
+    st.dataframe(
+        summary,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "avg_price_gbp": st.column_config.NumberColumn("Preco medio", format="GBP %.2f"),
+            "avg_rating": st.column_config.NumberColumn("Nota media", format="%.2f"),
+            "avg_value_score": st.column_config.NumberColumn("Valor medio", format="%.3f"),
+        },
+    )
+
+    st.subheader("Amostra segmentada")
+    st.dataframe(
+        segmented[
+            [
+                "title",
+                "category",
+                "price_gbp",
+                "rating",
+                "value_score",
+                "ml_segment",
+            ]
+        ].sort_values("value_score", ascending=False),
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "price_gbp": st.column_config.NumberColumn("Preco", format="GBP %.2f"),
+            "value_score": st.column_config.NumberColumn("Valor", format="%.3f"),
+        },
+    )
+
+
 def main() -> None:
     apply_custom_theme()
 
@@ -387,8 +452,8 @@ def main() -> None:
     render_kpis(filtered)
     render_insights(filtered)
 
-    overview_tab, opportunities_tab, statistics_tab, data_tab = st.tabs(
-        ["Visao geral", "Oportunidades", "Estatistica", "Dados"]
+    overview_tab, opportunities_tab, statistics_tab, ml_tab, data_tab = st.tabs(
+        ["Visao geral", "Oportunidades", "Estatistica", "ML", "Dados"]
     )
     with overview_tab:
         render_overview_tab(filtered)
@@ -396,6 +461,8 @@ def main() -> None:
         render_opportunities_tab(filtered)
     with statistics_tab:
         render_statistics_tab(filtered)
+    with ml_tab:
+        render_ml_tab(filtered)
     with data_tab:
         render_data_tab(filtered)
 
