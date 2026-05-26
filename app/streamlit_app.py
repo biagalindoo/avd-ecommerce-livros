@@ -56,44 +56,17 @@ def apply_custom_theme() -> None:
         }
 
         section[data-testid="stSidebar"] {
-            background: #111827;
-            border-right: 1px solid #374151;
+            background: #ffffff;
+            border-right: 1px solid #d1d5db;
         }
 
         section[data-testid="stSidebar"] * {
-            color: #f9fafb !important;
+            color: #111827 !important;
         }
 
         section[data-testid="stSidebar"] input,
         section[data-testid="stSidebar"] label,
         section[data-testid="stSidebar"] p {
-            color: #f9fafb !important;
-        }
-
-        section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
-            background: #ffffff !important;
-            border-color: #d1d5db !important;
-        }
-
-        section[data-testid="stSidebar"] div[data-baseweb="select"] span,
-        section[data-testid="stSidebar"] div[data-baseweb="select"] input {
-            color: #111827 !important;
-        }
-
-        section[data-testid="stSidebar"] div[data-baseweb="select"] svg {
-            fill: #111827 !important;
-        }
-
-        section[data-testid="stSidebar"] div[data-baseweb="tag"] {
-            background: #ef4444 !important;
-        }
-
-        section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
-            color: #ffffff !important;
-        }
-
-        div[data-baseweb="select"] input,
-        div[data-baseweb="select"] span {
             color: #111827 !important;
         }
 
@@ -197,6 +170,63 @@ def apply_custom_theme() -> None:
             .insight-grid {
                 grid-template-columns: 1fr;
             }
+        }
+
+        section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+            background-color: #ffffff !important;
+            border-color: #d1d5db !important;
+        }
+
+        section[data-testid="stSidebar"] div[data-baseweb="select"] input,
+        section[data-testid="stSidebar"] div[data-baseweb="select"] span,
+        section[data-testid="stSidebar"] div[data-baseweb="select"] div {
+            color: #111827 !important;
+            -webkit-text-fill-color: #111827 !important;
+        }
+
+        section[data-testid="stSidebar"] div[data-baseweb="select"] input::placeholder {
+            color: #374151 !important;
+            opacity: 1 !important;
+            -webkit-text-fill-color: #374151 !important;
+        }
+
+        section[data-testid="stSidebar"] div[data-baseweb="select"] svg {
+            fill: #111827 !important;
+            color: #111827 !important;
+        }
+
+        div[role="listbox"] {
+            background: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+        }
+
+        div[role="option"],
+        div[role="option"] *,
+        div[role="listbox"] *,
+        div[data-baseweb="popover"] div,
+        div[data-baseweb="popover"] span {
+            color: #111827 !important;
+            -webkit-text-fill-color: #111827 !important;
+        }
+
+        div[role="option"] {
+            background: #ffffff !important;
+        }
+
+        div[role="option"]:hover,
+        div[role="option"][aria-selected="true"] {
+            background: #e5e7eb !important;
+        }
+
+        section[data-testid="stSidebar"] div[data-baseweb="tag"] {
+            background: #ef4444 !important;
+        }
+
+        section[data-testid="stSidebar"] div[data-baseweb="tag"],
+        section[data-testid="stSidebar"] div[data-baseweb="tag"] *,
+        section[data-testid="stSidebar"] div[data-baseweb="tag"] span {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
         }
         </style>
         """,
