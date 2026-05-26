@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from decimal import Decimal
 from pathlib import Path
+import re
 from time import sleep
 from urllib.parse import urljoin
 
@@ -53,7 +54,10 @@ def get_category_urls(base_url: str = BOOKS_BASE_URL) -> list[tuple[str, str]]:
 
 
 def parse_price(price_text: str) -> Decimal:
-    clean_price = price_text.replace("£", "").strip()
+    price_match = re.search(r"\d+(?:\.\d+)?", price_text)
+    if price_match is None:
+        raise ValueError(f"Preco nao encontrado no texto: {price_text}")
+    clean_price = price_match.group(0)
     return Decimal(clean_price)
 
 

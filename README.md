@@ -20,17 +20,18 @@ Construir um fluxo completo de ciencia de dados:
 
 ```text
 .
-├── app/
-│   └── streamlit_app.py
-├── data/
-│   ├── raw/
-│   └── processed/
-├── notebooks/
-├── src/
-│   └── avd_project/
-├── tests/
-├── requirements.txt
-└── README.md
+|-- app/
+|   `-- streamlit_app.py
+|-- data/
+|   |-- raw/
+|   `-- processed/
+|-- notebooks/
+|-- scripts/
+|-- src/
+|   `-- avd_project/
+|-- tests/
+|-- requirements.txt
+`-- README.md
 ```
 
 ## Como rodar
@@ -47,6 +48,12 @@ Execute a extracao dos dados:
 
 ```bash
 python scripts/run_scraping.py
+```
+
+Execute o tratamento dos dados:
+
+```bash
+python scripts/run_etl.py
 ```
 
 As etapas do projeto serao adicionadas em commits pequenos.
