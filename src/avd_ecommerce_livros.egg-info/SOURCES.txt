@@ -1,0 +1,17 @@
+README.md
+pyproject.toml
+src/avd_ecommerce_livros.egg-info/PKG-INFO
+src/avd_ecommerce_livros.egg-info/SOURCES.txt
+src/avd_ecommerce_livros.egg-info/dependency_links.txt
+src/avd_ecommerce_livros.egg-info/top_level.txt
+src/avd_project/__init__.py
+src/avd_project/analysis.py
+src/avd_project/config.py
+src/avd_project/etl.py
+src/avd_project/ml.py
+src/avd_project/scraping.py
+src/avd_project/visualization.py
+tests/test_analysis.py
+tests/test_etl.py
+tests/test_ml.py
+tests/test_visualization.py
