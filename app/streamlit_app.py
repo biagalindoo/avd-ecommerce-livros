@@ -195,27 +195,36 @@ def apply_custom_theme() -> None:
             color: #111827 !important;
         }
 
-        div[role="listbox"] {
+        div[data-baseweb="popover"] {
             background: #ffffff !important;
-            border: 1px solid #d1d5db !important;
         }
 
-        div[role="option"],
-        div[role="option"] *,
-        div[role="listbox"] *,
+        div[data-baseweb="popover"] [role="listbox"] {
+            background: #ffffff !important;
+            border: 1px solid #d1d5db !important;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16) !important;
+        }
+
+        div[data-baseweb="popover"] [role="option"],
+        div[data-baseweb="popover"] [role="option"] *,
+        div[data-baseweb="popover"] [role="listbox"] *,
         div[data-baseweb="popover"] div,
         div[data-baseweb="popover"] span {
             color: #111827 !important;
             -webkit-text-fill-color: #111827 !important;
         }
 
-        div[role="option"] {
+        div[data-baseweb="popover"] [role="option"] {
             background: #ffffff !important;
         }
 
-        div[role="option"]:hover,
-        div[role="option"][aria-selected="true"] {
+        div[data-baseweb="popover"] [role="option"]:hover,
+        div[data-baseweb="popover"] [role="option"][aria-selected="true"] {
             background: #e5e7eb !important;
+        }
+
+        div[data-baseweb="popover"] [role="option"] [data-testid="stMarkdownContainer"] p {
+            color: #111827 !important;
         }
 
         section[data-testid="stSidebar"] div[data-baseweb="tag"] {
