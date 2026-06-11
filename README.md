@@ -1,81 +1,95 @@
-# Projeto Final - Analise e Visualizacao de Dados
+# Projeto Final - Análise e Visualização de Dados
 
-Projeto da disciplina **Analise e Visualizacao de Dados com Python**.
+Este projeto apresenta um pipeline completo de ciência de dados aplicado a um catálogo de livros em um ambiente de e-commerce. Os dados são obtidos por web scraping do site público [Books to Scrape](https://books.toscrape.com/) e processados até chegar a análises, visualizações e um dashboard interativo.
 
-## Tema
+## O que o projeto faz
 
-Analise de catalogo de livros em um ambiente de e-commerce, usando dados extraidos por web scraping do site publico [Books to Scrape](https://books.toscrape.com/).
+- Extrai dados de livros por meio de web scraping.
+- Limpa e transforma os dados com `pandas`.
+- Calcula métricas e estatísticas exploratórias.
+- Gera visualizações analíticas em HTML.
+- Oferece um dashboard interativo em `Streamlit`.
+- Inclui uma análise de segmentação com K-Means para apoio à tomada de decisão.
 
-## Objetivo
+## Estrutura do projeto
 
-Construir um fluxo completo de ciencia de dados:
+- `app/` — dashboard Streamlit.
+- `data/raw/` — dados brutos coletados.
+- `data/processed/` — dados limpos e prontos para análise.
+- `notebooks/` — notebooks de exploração e validação.
+- `scripts/` — scripts para executar scraping, ETL, análise e visualização.
+- `src/avd_project/` — código fonte principal do projeto.
+- `tests/` — testes automatizados.
+- `requirements.txt` — dependências do projeto.
 
-1. extrair dados brutos da web;
-2. tratar e normalizar os dados com Pandas;
-3. calcular metricas e estatisticas exploratorias;
-4. criar visualizacoes orientadas por principios de Gestalt;
-5. entregar um dashboard interativo em Streamlit.
+## Como usar
 
-## Estrutura
-
-```text
-.
-|-- app/
-|   `-- streamlit_app.py
-|-- data/
-|   |-- raw/
-|   `-- processed/
-|-- notebooks/
-|-- scripts/
-|-- src/
-|   `-- avd_project/
-|-- tests/
-|-- requirements.txt
-`-- README.md
-```
-
-## Como rodar
-
-Crie um ambiente virtual e instale as dependencias:
+1. Crie o ambiente virtual:
 
 ```bash
 python -m venv .venv
+```
+
+2. Ative o ambiente:
+
+```bash
+# Windows
+.venv\Scripts\Activate.ps1
+# ou
+.venv\Scripts\activate.bat
+```
+
+3. Instale as dependências:
+
+```bash
 pip install -r requirements.txt
 pip install -e .
 ```
 
-Execute a extracao dos dados:
+4. Execute as etapas do pipeline:
 
 ```bash
 python scripts/run_scraping.py
-```
-
-Execute o tratamento dos dados:
-
-```bash
 python scripts/run_etl.py
-```
-
-Execute a analise estatistica exploratoria:
-
-```bash
 python scripts/run_analysis.py
-```
-
-Gere as visualizacoes em HTML:
-
-```bash
 python scripts/run_visualizations.py
 ```
 
-Abra o dashboard interativo:
+5. Inicie o dashboard:
 
 ```bash
 streamlit run app/streamlit_app.py
 ```
 
-## Bonus de inovacao
+## Principais scripts
 
-O projeto inclui uma aba **ML** no dashboard com segmentacao K-Means. O modelo agrupa livros por preco, nota, valor percebido e tamanho do titulo para apoiar decisoes de catalogo.
+- `scripts/run_scraping.py`: coleta os dados de livros.
+- `scripts/run_etl.py`: transforma e normaliza os dados.
+- `scripts/run_analysis.py`: calcula estatísticas e métricas.
+- `scripts/run_visualizations.py`: gera gráficos e relatórios HTML.
+- `app/streamlit_app.py`: dashboard interativo.
 
-As etapas do projeto serao adicionadas em commits pequenos.
+## Destaques do projeto
+
+- Uso de `pandas` para tratamento e análise de dados.
+- Visualizações baseadas em princípios de Gestalt.
+- Dashboard Streamlit para exploração interativa.
+- Segmentação de livros por K-Means usando variáveis como preço, avaliação, valor percebido e tamanho do título.
+- Saídas com arquivos HTML e relatórios estruturados.
+
+## Requisitos
+
+- Python 3.10+ (recomendado)
+- `pandas`
+- `streamlit`
+- `scikit-learn`
+- `matplotlib` / `seaborn`
+
+> Para mais detalhes sobre as dependências, confira `requirements.txt`.
+
+## Observações
+
+- Os dados brutos estão em `data/raw/`.
+- Os dados processados ficam em `data/processed/`.
+- As visualizações exportadas estão em `exports/figures/`.
+
